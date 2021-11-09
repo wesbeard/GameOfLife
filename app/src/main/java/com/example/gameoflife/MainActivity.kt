@@ -2,17 +2,19 @@ package com.example.gameoflife
 
 import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageButton
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.slider.Slider
 import kotlin.concurrent.thread
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -35,14 +37,26 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when(requestCode) {
+            0 -> {
+                // Write grid to uri returned by file creation
+                grid.write(this@MainActivity, data?.data as Uri)
+            }
+            1 -> {
+                val openIntent = newIntent(this)
+                openIntent.putExtra("grid", grid.read(this@MainActivity, data?.data as Uri))
+                startActivity(openIntent)
+            }
+        }
+
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         title = "The Game of Life"
-
-        if (intent.hasExtra("grid")) {
-            // Set grid
-        }
 
         recycler = findViewById(R.id.recycler)
         recycler.layoutManager = GridLayoutManager(this@MainActivity, grid.width)
@@ -77,10 +91,20 @@ class MainActivity : AppCompatActivity() {
             print(simSpeed)
         }
 
+        save = findViewById(R.id.save)
+        save.setOnClickListener {
+            grid.save(this@MainActivity)
+        }
+
+        open = findViewById(R.id.open)
+        open.setOnClickListener {
+            grid.open(this@MainActivity)
+        }
+
         clone = findViewById(R.id.clone)
         clone.setOnClickListener {
             val cloneIntent = newIntent(this)
-            // cloneIntent.putExtra("grid", grid)
+            cloneIntent.putExtra("grid", grid.toJson())
             startActivity(cloneIntent)
         }
     }
@@ -121,7 +145,17 @@ class MainActivity : AppCompatActivity() {
         override fun onBindViewHolder(holder: CellViewHolder, position: Int) {
             holder.initPosition(position)
 
+            // Operations to perform once the last cell is created
             if (position == grid.totalCells - 1) {
+
+                // Set grid to intent extra if it exists
+                if (intent.hasExtra("grid")) {
+                    val json = intent.getStringExtra("grid")
+                    if (json != null) {
+                        grid.setFromJson(json, this@MainActivity)
+                    }
+                }
+
                 // Separate thread for calculating neighbors of each cell
                 thread {
                     for (cell in grid.cells.values) {

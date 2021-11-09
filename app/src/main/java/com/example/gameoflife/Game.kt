@@ -1,20 +1,29 @@
 package com.example.gameoflife
 
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.widget.Button
 import androidx.core.content.ContextCompat
 import com.google.gson.Gson
+import java.io.*
 
-class Cell(private val pos: Int,
-           private val col: Int,
-           private val row: Int,
-           private val view: Button) {
+
+const val defaultGenerations = 5
+
+class Cell(val pos: Int,
+           val col: Int,
+           val row: Int,
+           val view: Button) {
 
     var alive = false
     var neighbors = mutableListOf<Cell>()
+    var generationsRemaining = defaultGenerations
 
     fun toggleState(context: Context) {
         alive = !alive
+        generationsRemaining = defaultGenerations
         when (alive) {
             true -> this.view.setBackgroundColor(ContextCompat.getColor(context, R.color.green))
             false -> this.view.setBackgroundColor(ContextCompat.getColor(context, R.color.gray))
@@ -38,8 +47,6 @@ class Cell(private val pos: Int,
         neighbors.add(grid.cells[Pair(west, north)]!!)
         neighbors.add(grid.cells[Pair(east, south)]!!)
         neighbors.add(grid.cells[Pair(west, south)]!!)
-
-        print(neighbors)
     }
 }
 
@@ -48,6 +55,7 @@ class Grid {
     val width = 20
     val height = 20
     val totalCells = width * height
+    var generationsEnabled = true
 
     fun addCell(pos: Int, col: Int, row: Int, view: Button): Cell {
         val newCell = Cell(pos, col, row, view)
@@ -59,6 +67,16 @@ class Grid {
         var toToggle = mutableListOf<Cell>()
 
         for (cell in cells.values) {
+
+            if (generationsEnabled && cell.alive) {
+                if (cell.generationsRemaining <= 0) {
+                    toToggle.add(cell)
+                    continue
+                }
+                else {
+                    cell.generationsRemaining--
+                }
+            }
 
             // Get number of living neighbors
             var neighborsAlive = 0
@@ -86,12 +104,84 @@ class Grid {
         }
     }
 
-    fun toJson() {
+    fun toJson() : String {
         val gson = Gson()
+        var gridState = mutableListOf<Int>()
 
+        for (cell in cells.values) {
+            if (cell.alive) {
+                gridState.add(cell.pos)
+            }
+        }
+
+        return gson.toJson(gridState)
     }
 
-    fun fromJson() {
+    fun setFromJson(json: String, context: Context) {
         val gson = Gson()
+        var gridState = mutableListOf<Int>()
+        gridState = gson.fromJson(json, gridState.javaClass)
+
+        for (alivePos in gridState) {
+            val col = alivePos % width
+            val row = alivePos / height
+            cells[Pair(col, row)]?.toggleState(context)
+        }
+    }
+
+    /*
+    File I/O help from:
+    https://developer.android.com/training/data-storage/shared/documents-files#kotlin
+    https://gist.github.com/neonankiti/05922cf0a44108a2e2732671ed9ef386
+     */
+
+    fun save(activity: Activity) {
+        val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
+            addCategory(Intent.CATEGORY_OPENABLE)
+            type = "application/json"
+        }
+
+        activity.startActivityForResult(intent, 0)
+    }
+
+    fun write(activity: Activity, uri: Uri) {
+        try {
+            activity.contentResolver.openFileDescriptor(uri, "w")?.use {
+                FileOutputStream(it.fileDescriptor).use {
+                    it.write(
+                        toJson().toByteArray()
+                    )
+                }
+            }
+        } catch (e: FileNotFoundException) {
+            e.printStackTrace()
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+    }
+
+    fun open(activity: Activity) {
+        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+            addCategory(Intent.CATEGORY_OPENABLE)
+            type = "application/json"
+        }
+
+        var result = activity.startActivityForResult(intent, 1)
+
+        print(result.toString())
+    }
+
+    fun read(activity: Activity, uri: Uri): String {
+        val stringBuilder = StringBuilder()
+        activity.contentResolver.openInputStream(uri)?.use { inputStream ->
+            BufferedReader(InputStreamReader(inputStream)).use { reader ->
+                var line: String? = reader.readLine()
+                while (line != null) {
+                    stringBuilder.append(line)
+                    line = reader.readLine()
+                }
+            }
+        }
+        return stringBuilder.toString()
     }
 }

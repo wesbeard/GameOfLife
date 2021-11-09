@@ -13,7 +13,6 @@
         android:id="@+id/prompt"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
         android:gravity="center"
         android:paddingLeft="50dp"
         android:paddingRight="50dp"
@@ -81,20 +80,18 @@
         android:valueFrom="0.0"
         android:valueTo="1.0" />
 
-    <TextView
-        android:id="@+id/textView"
+    <View
+        android:id="@+id/divider"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="@string/speed_prompt" />
+        android:layout_height="1dp"
+        android:background="?android:attr/listDivider" />
 
     <LinearLayout
         android:id="@+id/fileControls"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:paddingLeft="50dp"
-        android:paddingRight="50dp">
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal">
 
         <ImageButton
             android:id="@+id/save"
@@ -109,10 +106,10 @@
             android:id="@+id/open"
             android:layout_width="0dp"
             android:layout_height="50dp"
-            android:layout_marginStart="20dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginEnd="20dp"
-            android:layout_marginRight="20dp"
+            android:layout_marginStart="25dp"
+            android:layout_marginLeft="25dp"
+            android:layout_marginEnd="25dp"
+            android:layout_marginRight="25dp"
             android:layout_weight="1"
             android:backgroundTint="@color/green"
             android:scaleType="fitCenter"

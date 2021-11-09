@@ -4,17 +4,18 @@ plugins {
 }
 
 android {
-    compileSdkVersion 31
+    compileSdkVersion 30
     buildToolsVersion "30.0.3"
 
     dependencies {
         implementation 'com.google.code.gson:gson:2.8.8'
+        implementation 'com.github.QuadFlask:colorpicker:0.0.15'
     }
 
     defaultConfig {
         applicationId "com.example.gameoflife"
         minSdkVersion 16
-        targetSdkVersion 31
+        targetSdkVersion 30
         versionCode 1
         versionName "1.0"
 
