@@ -9,6 +9,7 @@ import android.widget.Button
 import android.widget.ImageButton
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.slider.Slider
 import kotlin.concurrent.thread
 
 class MainActivity : AppCompatActivity() {
@@ -17,9 +18,11 @@ class MainActivity : AppCompatActivity() {
     private lateinit var play: ImageButton
     private lateinit var reset: ImageButton
     private lateinit var next: ImageButton
+    private lateinit var slider: Slider
 
     private var grid = Grid()
     private var running = false
+    private var simSpeed: Long = 500
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,7 +46,7 @@ class MainActivity : AppCompatActivity() {
             thread {
                 while (running) {
                     grid.simulate(this@MainActivity)
-                    Thread.sleep(500)
+                    Thread.sleep(simSpeed)
                 }
             }
         }
@@ -52,9 +55,15 @@ class MainActivity : AppCompatActivity() {
         next.setOnClickListener {
             grid.simulate(this@MainActivity)
         }
+
+        slider = findViewById(R.id.slider)
+        slider.addOnChangeListener { _, value, _ ->
+            simSpeed = (value * 1000).toLong()
+            print(simSpeed)
+        }
     }
 
-    fun toggleRunning() {
+    private fun toggleRunning() {
         running = !running
         when(running) {
             true -> play.setImageResource(R.drawable.pause)

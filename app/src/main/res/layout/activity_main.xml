@@ -13,7 +13,7 @@
         android:id="@+id/prompt"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="15dp"
         android:gravity="center"
         android:paddingLeft="50dp"
         android:paddingRight="50dp"
@@ -24,8 +24,8 @@
         android:id="@+id/recycler"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:layout_marginBottom="30dp">
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp">
 
     </androidx.recyclerview.widget.RecyclerView>
 
@@ -71,5 +71,21 @@
             tools:srcCompat="@drawable/next" />
 
     </LinearLayout>
+
+    <com.google.android.material.slider.Slider
+        android:id="@+id/slider"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:stepSize="0.1"
+        android:value="0.5"
+        android:valueFrom="0.0"
+        android:valueTo="1.0" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/speed_prompt" />
 
 </LinearLayout>

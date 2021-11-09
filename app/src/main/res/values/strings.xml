@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Game of Life</string>
     <string name="play_prompt">Tap a cell to toggle its state and press play to start the simulation</string>
+    <string name="speed_prompt">Simulation Speed (seconds/tick)</string>
 </resources>

@@ -15,15 +15,12 @@ class Cell(private val pos: Int,
     fun toggleState(context: Context) {
         alive = !alive
         when (alive) {
-            true -> {
-                this.view.setBackgroundColor(ContextCompat.getColor(context, R.color.green))
-            }
+            true -> this.view.setBackgroundColor(ContextCompat.getColor(context, R.color.green))
             false -> this.view.setBackgroundColor(ContextCompat.getColor(context, R.color.gray))
         }
     }
 
     fun calculateNeighbors(grid: Grid) {
-
         val width = grid.width - 1
         val height = grid.height - 1
 
