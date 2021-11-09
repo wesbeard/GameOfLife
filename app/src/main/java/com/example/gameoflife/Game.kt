@@ -3,6 +3,7 @@ package com.example.gameoflife
 import android.content.Context
 import android.widget.Button
 import androidx.core.content.ContextCompat
+import com.google.gson.Gson
 
 class Cell(private val pos: Int,
            private val col: Int,
@@ -83,5 +84,14 @@ class Grid {
         for (cell in toToggle) {
             cell.toggleState(context)
         }
+    }
+
+    fun toJson() {
+        val gson = Gson()
+
+    }
+
+    fun fromJson() {
+        val gson = Gson()
     }
 }

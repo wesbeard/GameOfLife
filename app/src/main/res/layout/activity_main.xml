@@ -30,7 +30,7 @@
     </androidx.recyclerview.widget.RecyclerView>
 
     <LinearLayout
-        android:id="@+id/controls"
+        android:id="@+id/simControls"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
@@ -87,5 +87,45 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:text="@string/speed_prompt" />
+
+    <LinearLayout
+        android:id="@+id/fileControls"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingLeft="50dp"
+        android:paddingRight="50dp">
+
+        <ImageButton
+            android:id="@+id/save"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:backgroundTint="@color/green"
+            android:scaleType="fitCenter"
+            android:src="@drawable/save" />
+
+        <ImageButton
+            android:id="@+id/open"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_weight="1"
+            android:backgroundTint="@color/green"
+            android:scaleType="fitCenter"
+            android:src="@drawable/open" />
+
+        <ImageButton
+            android:id="@+id/clone"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:backgroundTint="@color/green"
+            android:scaleType="fitCenter"
+            android:src="@drawable/clone" />
+    </LinearLayout>
 
 </LinearLayout>

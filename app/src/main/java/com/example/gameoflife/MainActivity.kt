@@ -1,5 +1,7 @@
 package com.example.gameoflife
 
+import android.content.Context
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -19,15 +21,28 @@ class MainActivity : AppCompatActivity() {
     private lateinit var reset: ImageButton
     private lateinit var next: ImageButton
     private lateinit var slider: Slider
+    private lateinit var save: ImageButton
+    private lateinit var open: ImageButton
+    private lateinit var clone: ImageButton
 
     private var grid = Grid()
     private var running = false
     private var simSpeed: Long = 500
 
+    companion object {
+        fun newIntent(packageContext: Context): Intent {
+            return Intent(packageContext, MainActivity::class.java)
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         title = "The Game of Life"
+
+        if (intent.hasExtra("grid")) {
+            // Set grid
+        }
 
         recycler = findViewById(R.id.recycler)
         recycler.layoutManager = GridLayoutManager(this@MainActivity, grid.width)
@@ -60,6 +75,13 @@ class MainActivity : AppCompatActivity() {
         slider.addOnChangeListener { _, value, _ ->
             simSpeed = (value * 1000).toLong()
             print(simSpeed)
+        }
+
+        clone = findViewById(R.id.clone)
+        clone.setOnClickListener {
+            val cloneIntent = newIntent(this)
+            // cloneIntent.putExtra("grid", grid)
+            startActivity(cloneIntent)
         }
     }
 
@@ -100,8 +122,7 @@ class MainActivity : AppCompatActivity() {
             holder.initPosition(position)
 
             if (position == grid.totalCells - 1) {
-                // Separate thread for calculating neighbors for each cell
-                // It's slow but only has to run once
+                // Separate thread for calculating neighbors of each cell
                 thread {
                     for (cell in grid.cells.values) {
                         cell.calculateNeighbors(grid)
