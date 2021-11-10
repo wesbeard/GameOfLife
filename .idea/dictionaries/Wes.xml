@@ -2,6 +2,7 @@
   <dictionary name="Wes">
     <words>
       <w>coord</w>
+      <w>gson</w>
     </words>
   </dictionary>
 </component>

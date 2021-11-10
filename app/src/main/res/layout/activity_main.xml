@@ -3,27 +3,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:gravity="center_horizontal"
     android:orientation="vertical"
     android:padding="10dp"
     tools:context=".MainActivity">
 
-    <TextView
-        android:id="@+id/prompt"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:paddingLeft="50dp"
-        android:paddingRight="50dp"
-        android:text="@string/play_prompt"
-        android:textSize="18sp" />
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp">
 
     </androidx.recyclerview.widget.RecyclerView>
@@ -78,10 +67,15 @@
         android:stepSize="0.1"
         android:value="0.5"
         android:valueFrom="0.0"
-        android:valueTo="1.0" />
+        android:valueTo="1.0"
+        app:haloColor="@color/light_gray"
+        app:thumbColor="@color/gray"
+        app:tickColorInactive="@color/gray"
+        app:trackColorActive="@color/gray"
+        app:trackColorInactive="@color/light_gray" />
 
     <View
-        android:id="@+id/divider"
+        android:id="@+id/topDivider"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="?android:attr/listDivider" />
@@ -91,6 +85,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
         android:orientation="horizontal">
 
         <ImageButton
@@ -119,10 +114,93 @@
             android:id="@+id/clone"
             android:layout_width="0dp"
             android:layout_height="50dp"
+            android:layout_marginEnd="25dp"
+            android:layout_marginRight="25dp"
             android:layout_weight="1"
             android:backgroundTint="@color/green"
             android:scaleType="fitCenter"
             android:src="@drawable/clone" />
+
+        <ImageButton
+            android:id="@+id/randomize"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:backgroundTint="@color/green"
+            android:scaleType="fitCenter"
+            android:src="@drawable/randomize" />
+
+    </LinearLayout>
+
+    <View
+        android:id="@+id/bottomDivider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="?android:attr/listDivider" />
+
+    <LinearLayout
+        android:id="@+id/colorControls"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/primaryColor"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:text="@string/primary"
+            app:icon="@drawable/color"
+            app:iconPadding="0dp"
+            app:iconTint="#FFFFFF" />
+
+        <Button
+            android:id="@+id/secondaryColor"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="15dp"
+            android:layout_marginLeft="15dp"
+            android:text="@string/secondary"
+            app:backgroundTint="@color/gray"
+            app:icon="@drawable/color"
+            app:iconPadding="0dp"
+            app:iconTint="#FFFFFF" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/generationControls"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/generations"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="@string/generations"
+            android:textSize="14sp"
+            app:thumbTint="@color/switch_selector"
+            app:trackTint="@color/switch_selector"
+            />
+
+        <com.google.android.material.slider.Slider
+            android:id="@+id/generationsSlider"
+            android:layout_width="240dp"
+            android:layout_height="wrap_content"
+            android:stepSize="1"
+            android:value="6"
+            android:valueFrom="1"
+            android:valueTo="11"
+            app:haloColor="@color/light_gray"
+            app:thumbColor="@color/gray"
+            app:tickColorInactive="@color/gray"
+            app:trackColorActive="@color/gray"
+            app:trackColorInactive="@color/light_gray" />
     </LinearLayout>
 
 </LinearLayout>

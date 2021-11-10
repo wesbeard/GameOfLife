@@ -5,12 +5,11 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.widget.Button
-import androidx.core.content.ContextCompat
 import com.google.gson.Gson
 import java.io.*
+import kotlin.random.Random
 
-
-const val defaultGenerations = 5
+const val defaultGenerations = 6
 
 class Cell(val pos: Int,
            val col: Int,
@@ -21,12 +20,12 @@ class Cell(val pos: Int,
     var neighbors = mutableListOf<Cell>()
     var generationsRemaining = defaultGenerations
 
-    fun toggleState(context: Context) {
+    fun toggleState(context: Context, primaryColor: Int, secondaryColor: Int) {
         alive = !alive
         generationsRemaining = defaultGenerations
         when (alive) {
-            true -> this.view.setBackgroundColor(ContextCompat.getColor(context, R.color.green))
-            false -> this.view.setBackgroundColor(ContextCompat.getColor(context, R.color.gray))
+            true -> this.view.setBackgroundColor(primaryColor)
+            false -> this.view.setBackgroundColor(secondaryColor)
         }
     }
 
@@ -56,6 +55,9 @@ class Grid {
     val height = 20
     val totalCells = width * height
     var generationsEnabled = true
+    var generations = defaultGenerations
+    var primaryColor = 0
+    var secondaryColor = 0
 
     fun addCell(pos: Int, col: Int, row: Int, view: Button): Cell {
         val newCell = Cell(pos, col, row, view)
@@ -100,7 +102,21 @@ class Grid {
         }
 
         for (cell in toToggle) {
-            cell.toggleState(context)
+            cell.toggleState(context, primaryColor, secondaryColor)
+        }
+    }
+
+    fun randomize(context: Context) {
+        for (cell in cells.values) {
+            if (Random.nextBoolean()) {
+                cell.toggleState(context, primaryColor, secondaryColor)
+            }
+        }
+    }
+
+    fun setGenerationsRemaining() {
+        for (cell in cells.values) {
+            cell.generationsRemaining = generations
         }
     }
 
@@ -125,7 +141,7 @@ class Grid {
         for (alivePos in gridState) {
             val col = alivePos % width
             val row = alivePos / height
-            cells[Pair(col, row)]?.toggleState(context)
+            cells[Pair(col, row)]?.toggleState(context, primaryColor, secondaryColor)
         }
     }
 

@@ -2,8 +2,7 @@
     <!-- Base application theme. -->
     <style name="Theme.GameOfLife" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="colorPrimary">@color/green</item>
-        <item name="colorOnPrimary">@color/black</item>
-        <item name="colorAccent">@color/green</item>
-        <item name="android:statusBarColor" tools:targetApi="l">@color/green</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="android:statusBarColor" tools:targetApi="l">@color/gray</item>
     </style>
 </resources>
