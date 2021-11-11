@@ -230,11 +230,12 @@ class MainActivity : AppCompatActivity() {
             .with(this)
             .setTitle("Choose a color")
             .wheelType(ColorPickerView.WHEEL_TYPE.FLOWER)
+            .initialColor(defaultColor)
             .showAlphaSlider(false)
             .density(12)
             .setPositiveButton(
                 "Ok"
-            ) { dialog, selectedColor, _ ->
+            ) { _, selectedColor, _ ->
                 if (primary) recolorPrimary(selectedColor) else recolorSecondary(selectedColor)
             }
             .setNegativeButton(
@@ -296,7 +297,7 @@ class MainActivity : AppCompatActivity() {
         activity.startActivityForResult(intent, 0)
     }
 
-    fun write(activity: Activity, uri: Uri) {
+    private fun write(activity: Activity, uri: Uri) {
         try {
             activity.contentResolver.openFileDescriptor(uri, "w")?.use {
                 FileOutputStream(it.fileDescriptor).use {
@@ -312,7 +313,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun open(activity: Activity) {
+    private fun open(activity: Activity) {
         val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
             addCategory(Intent.CATEGORY_OPENABLE)
             type = "application/json"
@@ -323,7 +324,7 @@ class MainActivity : AppCompatActivity() {
         print(result.toString())
     }
 
-    fun read(activity: Activity, uri: Uri): String {
+    private fun read(activity: Activity, uri: Uri): String {
         val stringBuilder = StringBuilder()
         activity.contentResolver.openInputStream(uri)?.use { inputStream ->
             BufferedReader(InputStreamReader(inputStream)).use { reader ->

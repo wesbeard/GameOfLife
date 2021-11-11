@@ -1,13 +1,9 @@
 package com.example.gameoflife
 
 import android.app.Activity
-import android.content.Intent
-import android.net.Uri
 import android.widget.Button
 import com.google.gson.Gson
-import java.io.*
 import kotlin.random.Random
-
 
 const val defaultGenerations = 6
 
