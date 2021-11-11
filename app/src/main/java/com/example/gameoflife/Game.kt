@@ -1,7 +1,6 @@
 package com.example.gameoflife
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.widget.Button
@@ -9,22 +8,28 @@ import com.google.gson.Gson
 import java.io.*
 import kotlin.random.Random
 
+
 const val defaultGenerations = 6
 
-class Cell(val pos: Int,
-           val col: Int,
-           val row: Int,
-           val view: Button) {
+class Cell(
+    val pos: Int,
+    private val col: Int,
+    private val row: Int,
+    val view: Button
+) {
 
     var alive = false
     var neighbors = mutableListOf<Cell>()
     var generationsRemaining = defaultGenerations
 
-    fun toggleState(context: Context, primaryColor: Int, secondaryColor: Int) {
+    fun toggleState(activity: Activity, primaryColor: Int, secondaryColor: Int) {
         alive = !alive
         generationsRemaining = defaultGenerations
         when (alive) {
-            true -> this.view.setBackgroundColor(primaryColor)
+            true -> {
+                this.view.setBackgroundColor(primaryColor)
+                animate(activity)
+            }
             false -> this.view.setBackgroundColor(secondaryColor)
         }
     }
@@ -47,6 +52,19 @@ class Cell(val pos: Int,
         neighbors.add(grid.cells[Pair(east, south)]!!)
         neighbors.add(grid.cells[Pair(west, south)]!!)
     }
+
+    /*
+    Animation help from:
+    https://stackoverflow.com/questions/15685485/android-shrink-and-grow-sequential-animation
+    https://stackoverflow.com/questions/37689903/animators-may-only-be-run-on-looper-threads-android/40508143
+     */
+    fun animate(activity: Activity) {
+        activity.runOnUiThread(Runnable {
+            view.animate().scaleX(.7F).scaleY(.7F).setDuration(50).withEndAction(Runnable {
+                view.animate().scaleX(1F).scaleY(1F).duration = 150
+            })
+        })
+    }
 }
 
 class Grid {
@@ -65,51 +83,58 @@ class Grid {
         return newCell
     }
 
-    fun simulate(context: Context) {
+    fun simulate(activity: Activity) {
         var toToggle = mutableListOf<Cell>()
 
         for (cell in cells.values) {
+            var toggled = false
 
             if (generationsEnabled && cell.alive) {
                 if (cell.generationsRemaining <= 0) {
                     toToggle.add(cell)
-                    continue
+                    toggled = true
                 }
                 else {
                     cell.generationsRemaining--
                 }
             }
 
-            // Get number of living neighbors
-            var neighborsAlive = 0
-            for (neighbor in cell.neighbors) {
-                if (neighbor.alive) {
-                    neighborsAlive++
+            if (!toggled) {
+                // Get number of living neighbors
+                var neighborsAlive = 0
+                for (neighbor in cell.neighbors) {
+                    if (neighbor.alive) {
+                        neighborsAlive++
+                    }
                 }
-            }
 
-            // If cell is dead and has three living neighbors bring it to life
-            if (!cell.alive && neighborsAlive == 3) {
-                toToggle.add(cell)
-                continue
-            }
+                // If cell is dead and has three living neighbors bring it to life
+                if (!toggled && !cell.alive && neighborsAlive == 3) {
+                    toToggle.add(cell)
+                    toggled = true
+                }
 
-            // If cell is alive and doesn't have 2 or 3 living neighbors kill it
-            if (cell.alive && !(neighborsAlive == 2 || neighborsAlive == 3)) {
-                toToggle.add(cell)
-                continue
+                // If cell is alive and doesn't have 2 or 3 living neighbors kill it
+                if (!toggled && cell.alive && !(neighborsAlive == 2 || neighborsAlive == 3)) {
+                    toToggle.add(cell)
+                    toggled = true
+                }
+
+                if ((!toggled && cell.alive) || toggled && !cell.alive) {
+                    cell.animate(activity)
+                }
             }
         }
 
         for (cell in toToggle) {
-            cell.toggleState(context, primaryColor, secondaryColor)
+            cell.toggleState(activity, primaryColor, secondaryColor)
         }
     }
 
-    fun randomize(context: Context) {
+    fun randomize(activity: Activity) {
         for (cell in cells.values) {
             if (Random.nextBoolean()) {
-                cell.toggleState(context, primaryColor, secondaryColor)
+                cell.toggleState(activity, primaryColor, secondaryColor)
             }
         }
     }
@@ -133,7 +158,7 @@ class Grid {
         return gson.toJson(gridState)
     }
 
-    fun setFromJson(json: String, context: Context) {
+    fun setFromJson(json: String, activity: Activity) {
         val gson = Gson()
         var gridState = mutableListOf<Int>()
         gridState = gson.fromJson(json, gridState.javaClass)
@@ -141,7 +166,7 @@ class Grid {
         for (alivePos in gridState) {
             val col = alivePos % width
             val row = alivePos / height
-            cells[Pair(col, row)]?.toggleState(context, primaryColor, secondaryColor)
+            cells[Pair(col, row)]?.toggleState(activity, primaryColor, secondaryColor)
         }
     }
 

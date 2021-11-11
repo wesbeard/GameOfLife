@@ -2,6 +2,7 @@ package com.example.gameoflife
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -51,7 +52,7 @@ class MainActivity : AppCompatActivity() {
         if (resultCode == 0) {
             return
         }
-        when(requestCode) {
+        when (requestCode) {
             0 -> {
                 // Write grid to uri returned by file creation
                 grid.write(this@MainActivity, data?.data as Uri)
@@ -80,7 +81,7 @@ class MainActivity : AppCompatActivity() {
 
         reset = findViewById(R.id.reset)
         reset.setOnClickListener {
-            toggleRunning()
+            if (running) toggleRunning()
             recycler.adapter = RecyclerAdapter()
         }
 
@@ -88,6 +89,11 @@ class MainActivity : AppCompatActivity() {
         play.setOnClickListener {
             // Start simulation
             toggleRunning()
+
+            play.animate().scaleX(.9F).scaleY(.9F).setDuration(100).withEndAction(Runnable {
+                play.animate().scaleX(1F).scaleY(1F).duration = 100
+            })
+
             thread {
                 while (running) {
                     grid.simulate(this@MainActivity)
@@ -140,7 +146,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         generations = findViewById(R.id.generations)
-        generations.setOnCheckedChangeListener { view: CompoundButton, checked: Boolean ->
+        generations.setOnCheckedChangeListener { _: CompoundButton, checked: Boolean ->
             grid.generationsEnabled = checked
         }
 
@@ -153,13 +159,13 @@ class MainActivity : AppCompatActivity() {
 
     private fun toggleRunning() {
         running = !running
-        when(running) {
+        when (running) {
             true -> play.setImageResource(R.drawable.pause)
             false -> play.setImageResource(R.drawable.play)
         }
     }
 
-    inner class CellViewHolder(cellView: View): RecyclerView.ViewHolder(cellView) {
+    inner class CellViewHolder(cellView: View) : RecyclerView.ViewHolder(cellView) {
         private val cellView: Button = cellView.findViewById(R.id.cell_button)
         lateinit var cell: Cell
 
@@ -176,7 +182,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    inner class RecyclerAdapter: RecyclerView.Adapter<CellViewHolder>() {
+    inner class RecyclerAdapter : RecyclerView.Adapter<CellViewHolder>() {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CellViewHolder {
             val inflater: LayoutInflater = LayoutInflater.from(parent.context)
@@ -213,19 +219,26 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun launchColorPicker(primary: Boolean) {
+
+        var defaultColor = when(primary) {
+            true -> grid.primaryColor
+            false -> grid.secondaryColor
+        }
+
         ColorPickerDialogBuilder
             .with(this)
             .setTitle("Choose a color")
-            .initialColor(grid.primaryColor)
-            .wheelType(ColorPickerView.WHEEL_TYPE.CIRCLE)
+            .wheelType(ColorPickerView.WHEEL_TYPE.FLOWER)
+            .showAlphaSlider(false)
             .density(12)
             .setPositiveButton(
                 "Ok"
-            ) { dialog, selectedColor, allColors ->
-                if (primary) recolorPrimary(selectedColor) else recolorSecondary(selectedColor) }
+            ) { dialog, selectedColor, _ ->
+                if (primary) recolorPrimary(selectedColor) else recolorSecondary(selectedColor)
+            }
             .setNegativeButton(
                 "Cancel"
-            ) { dialog, which -> }
+            ) { _, _ -> }
             .build()
             .show()
     }
