@@ -1,8 +1,8 @@
 package com.example.gameoflife
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.flask.colorpicker.ColorPickerView
 import com.flask.colorpicker.builder.ColorPickerDialogBuilder
 import com.google.android.material.slider.Slider
+import java.io.*
 import kotlin.concurrent.thread
 
 class MainActivity : AppCompatActivity() {
@@ -55,12 +56,12 @@ class MainActivity : AppCompatActivity() {
         when (requestCode) {
             0 -> {
                 // Write grid to uri returned by file creation
-                grid.write(this@MainActivity, data?.data as Uri)
+                write(this@MainActivity, data?.data as Uri)
             }
             1 -> {
                 // Open new activity with grid from file
                 val openIntent = newIntent(this)
-                openIntent.putExtra("grid", grid.read(this@MainActivity, data?.data as Uri))
+                openIntent.putExtra("grid", read(this@MainActivity, data?.data as Uri))
                 startActivity(openIntent)
             }
         }
@@ -114,12 +115,12 @@ class MainActivity : AppCompatActivity() {
 
         save = findViewById(R.id.save)
         save.setOnClickListener {
-            grid.save(this@MainActivity)
+            save(this@MainActivity)
         }
 
         open = findViewById(R.id.open)
         open.setOnClickListener {
-            grid.open(this@MainActivity)
+            open(this@MainActivity)
         }
 
         clone = findViewById(R.id.clone)
@@ -278,5 +279,61 @@ class MainActivity : AppCompatActivity() {
         var wrapDrawable = DrawableCompat.wrap(button.background)
         DrawableCompat.setTint(wrapDrawable, color)
         button.setBackgroundDrawable(DrawableCompat.unwrap(wrapDrawable))
+    }
+
+    /*
+    File I/O help from:
+    https://developer.android.com/training/data-storage/shared/documents-files#kotlin
+    https://gist.github.com/neonankiti/05922cf0a44108a2e2732671ed9ef386
+     */
+
+    fun save(activity: Activity) {
+        val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
+            addCategory(Intent.CATEGORY_OPENABLE)
+            type = "application/json"
+        }
+
+        activity.startActivityForResult(intent, 0)
+    }
+
+    fun write(activity: Activity, uri: Uri) {
+        try {
+            activity.contentResolver.openFileDescriptor(uri, "w")?.use {
+                FileOutputStream(it.fileDescriptor).use {
+                    it.write(
+                        grid.toJson().toByteArray()
+                    )
+                }
+            }
+        } catch (e: FileNotFoundException) {
+            e.printStackTrace()
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+    }
+
+    fun open(activity: Activity) {
+        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+            addCategory(Intent.CATEGORY_OPENABLE)
+            type = "application/json"
+        }
+
+        var result = activity.startActivityForResult(intent, 1)
+
+        print(result.toString())
+    }
+
+    fun read(activity: Activity, uri: Uri): String {
+        val stringBuilder = StringBuilder()
+        activity.contentResolver.openInputStream(uri)?.use { inputStream ->
+            BufferedReader(InputStreamReader(inputStream)).use { reader ->
+                var line: String? = reader.readLine()
+                while (line != null) {
+                    stringBuilder.append(line)
+                    line = reader.readLine()
+                }
+            }
+        }
+        return stringBuilder.toString()
     }
 }
