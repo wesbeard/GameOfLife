@@ -33,10 +33,10 @@ class MainActivity : AppCompatActivity() {
     private lateinit var open: ImageButton
     private lateinit var clone: ImageButton
     private lateinit var randomize: ImageButton
-    private lateinit var primaryColorButton: Button
-    private lateinit var secondaryColorButton: Button
     private lateinit var generations: SwitchCompat
     private lateinit var generationsSlider: Slider
+    private lateinit var primaryColorButton: Button
+    private lateinit var secondaryColorButton: Button
 
     private var grid = Grid()
     private var running = false
@@ -50,6 +50,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+
         if (resultCode == 0) {
             return
         }
@@ -136,16 +137,6 @@ class MainActivity : AppCompatActivity() {
             grid.randomize(this@MainActivity)
         }
 
-        primaryColorButton = findViewById(R.id.primaryColor)
-        primaryColorButton.setOnClickListener {
-            launchColorPicker(true)
-        }
-
-        secondaryColorButton = findViewById(R.id.secondaryColor)
-        secondaryColorButton.setOnClickListener {
-            launchColorPicker(false)
-        }
-
         generations = findViewById(R.id.generations)
         generations.setOnCheckedChangeListener { _: CompoundButton, checked: Boolean ->
             grid.generationsEnabled = checked
@@ -156,6 +147,10 @@ class MainActivity : AppCompatActivity() {
             grid.generations = value.toInt()
             grid.setGenerationsRemaining()
         }
+
+        primaryColorButton = findViewById(R.id.primaryColor)
+
+        secondaryColorButton = findViewById(R.id.secondaryColor)
     }
 
     private fun toggleRunning() {
@@ -219,7 +214,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun launchColorPicker(primary: Boolean) {
+    fun launchColorPicker(primary: Boolean) {
 
         var defaultColor = when(primary) {
             true -> grid.primaryColor
@@ -246,8 +241,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun recolorPrimary(newColor: Int) {
-        grid.primaryColor = newColor
         primaryColorButton.setBackgroundColor(newColor)
+        grid.primaryColor = newColor
         for (cell in grid.cells.values) {
             if (cell.alive) {
                 cell.view.setBackgroundColor(newColor)
@@ -300,7 +295,7 @@ class MainActivity : AppCompatActivity() {
     private fun write(activity: Activity, uri: Uri) {
         try {
             activity.contentResolver.openFileDescriptor(uri, "w")?.use {
-                FileOutputStream(it.fileDescriptor).use {
+                FileOutputStream(it.fileDescriptor).use { it ->
                     it.write(
                         grid.toJson().toByteArray()
                     )

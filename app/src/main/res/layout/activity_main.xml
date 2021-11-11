@@ -13,6 +13,7 @@
         android:id="@+id/recycler"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
         android:layout_marginBottom="10dp">
 
     </androidx.recyclerview.widget.RecyclerView>
@@ -133,49 +134,18 @@
     </LinearLayout>
 
     <View
-        android:id="@+id/bottomDivider"
+        android:id="@+id/middleDivider"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="?android:attr/listDivider" />
 
     <LinearLayout
-        android:id="@+id/colorControls"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_gravity="center"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"
-        android:layout_weight="1"
-        android:gravity="center"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/primaryColor"
-            android:layout_width="150dp"
-            android:layout_height="wrap_content"
-            android:text="@string/primary"
-            app:icon="@drawable/color"
-            app:iconPadding="0dp"
-            app:iconTint="#FFFFFF" />
-
-        <Button
-            android:id="@+id/secondaryColor"
-            android:layout_width="150dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="15dp"
-            android:layout_marginLeft="15dp"
-            android:text="@string/secondary"
-            app:backgroundTint="@color/gray"
-            app:icon="@drawable/color"
-            app:iconPadding="0dp"
-            app:iconTint="#FFFFFF" />
-    </LinearLayout>
-
-    <LinearLayout
         android:id="@+id/generationControls"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp">
 
         <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/generations"
@@ -185,8 +155,7 @@
             android:text="@string/generations"
             android:textSize="14sp"
             app:thumbTint="@color/switch_selector"
-            app:trackTint="@color/switch_selector"
-            />
+            app:trackTint="@color/switch_selector" />
 
         <com.google.android.material.slider.Slider
             android:id="@+id/generationsSlider"
@@ -201,6 +170,20 @@
             app:tickColorInactive="@color/gray"
             app:trackColorActive="@color/gray"
             app:trackColorInactive="@color/light_gray" />
+
     </LinearLayout>
+
+    <View
+        android:id="@+id/bottomDivider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="?android:attr/listDivider" />
+
+    <fragment
+        android:id="@+id/colorFragment"
+        android:name="com.example.gameoflife.ColorFragment"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginTop="10dp" />
 
 </LinearLayout>
