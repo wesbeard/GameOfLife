@@ -68,7 +68,7 @@ class Grid {
     val width = 20
     val height = 20
     val totalCells = width * height
-    var generationsEnabled = true
+    var generationsEnabled = false
     var generations = defaultGenerations
     var primaryColor = 0
     var secondaryColor = 0
