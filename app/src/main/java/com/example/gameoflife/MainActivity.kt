@@ -66,7 +66,6 @@ class MainActivity : AppCompatActivity() {
                 startActivity(openIntent)
             }
         }
-
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
